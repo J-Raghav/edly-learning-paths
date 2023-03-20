@@ -16,15 +16,15 @@ export default function LearningPathHeader(props) {
   return (
     <Box
       sx={sx}
-      className={`d-flex justify-content-center align-items-start bg-white ${className}`}
+      className={`row justify-content-center align-items-start bg-white ${className}`}
     >
       <img
-        className="d-block px-3"
+        className="d-block col-12 col-md-3 px-3 mb-3 mb-md-0"
         style={{ maxWidth: "10rem" }}
         src={iconUrl}
         alt={learningPath.title}
       />
-      <div className="d-flex flex-column w-75 px-3">
+      <div className="col-12 col-md-9 d-flex flex-column px-3">
         <div>
           <h1 className={`text-dark ${titleSize || "h1"}`}>
             {learningPath.title}

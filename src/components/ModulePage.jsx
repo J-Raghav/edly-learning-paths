@@ -43,17 +43,17 @@ export default function ModulePage() {
       <ModuleHeader
         module={module}
         titleSize="h3"
-        className="border shadow shadow-sm p-5 m-5 mb-0"
+        className="border shadow shadow-sm p-3 p-md-5 m-5 mb-0"
       />
       <div className="row align-items-stretch m-5 mt-0">
-        <div className="col-4 border bg-white p-5">
+        <div className="col-12 col-md-4 border bg-white p-3 p-md-5">
           <div className="">
             <h5 className="h5 mb-3">Units</h5>
             <UnitList units={module.units} />
           </div>
         </div>
 
-        <div className="col-8 border bg-white p-5">
+        <div className="col-12 col-md-8 border bg-white p-3 p-md-5">
           <div className="">
             <h5 className="h5 mb-3">Related Learning Paths</h5>
             {module.parents?.map((lp) => {

@@ -10,7 +10,10 @@ export default function ModuleCard(props) {
   );
 
   return (
-    <ModuleHeader module={module} className="border shadow shadow-sm p-5">
+    <ModuleHeader
+      module={module}
+      className="border shadow shadow-sm p-3 p-md-5"
+    >
       <Link
         onClick={() => setOverviewExpanded(!overviewExpanded)}
         className="d-block link-dark text-decoration-none mt-3"

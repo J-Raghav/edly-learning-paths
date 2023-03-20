@@ -52,7 +52,7 @@ export default function Home() {
   return (
     <>
       <LinearProgress hidden={!isLoading} />{" "}
-      <div className="container p-5">
+      <div className="container p-3 p-md-5">
         <h1 className="h3 mb-3">Learning Paths</h1>
         <div className="row mb-3">
           <FormControl sx={{ m: 1, width: 300 }}>

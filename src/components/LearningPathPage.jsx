@@ -41,7 +41,7 @@ export default function LearningPathPage(props) {
         Back
       </button>
       <LearningPathHeader
-        className="border mx-5 my-4 p-5"
+        className="border mx-5 my-4 p-3 p-md-5"
         learningPath={learningPath}
         {...headerProps}
       />

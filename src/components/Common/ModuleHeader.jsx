@@ -18,10 +18,15 @@ export default function ModuleHeader(props) {
 
   return (
     <div
-      className={`d-flex justify-content-center align-items-start bg-white ${className}`}
+      className={`row justify-content-center align-items-start bg-white ${className}`}
     >
-      <img className="d-block px-3" src={iconUrl} alt={module.title} />
-      <div className="w-75 px-3">
+      <img
+        className="d-block col-12 col-md-3 px-3 mb-3 mb-md-0"
+        src={iconUrl}
+        style={{ maxWidth: "10rem" }}
+        alt={module.title}
+      />
+      <div className="w-75 col-12 col-md-9 px-3">
         <h3 className={`${titleSize || "h5"}`}>
           <NavLink
             className="link-primary text-decoration-none"
