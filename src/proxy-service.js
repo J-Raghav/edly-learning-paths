@@ -1,5 +1,10 @@
 import axios from "axios";
-import { corsProxy, createProductTypeQuery } from "./utils";
+import {
+  corsProxy,
+  createProductTypeQuery,
+  microsoftLearnUrl,
+  proxyEnabled,
+} from "./utils";
 
 export function getLearningPaths(selectedProducts) {
   const msLearnAPI = `https://learn.microsoft.com/api/contentbrowser/search?environment=prod&locale=en-us&facet=roles&facet=levels&facet=products&facet=subjects&facet=resource_type&$filter=((resource_type eq 'learning path')) ${createProductTypeQuery(
@@ -8,10 +13,12 @@ export function getLearningPaths(selectedProducts) {
 
   return responseWrapper(
     axios({
-      url: corsProxy,
-      params: {
-        url: msLearnAPI,
-      },
+      url: proxyEnabled ? corsProxy : microsoftLearnUrl,
+      params: proxyEnabled
+        ? {
+            url: msLearnAPI,
+          }
+        : undefined,
     })
   ).then((response) => {
     return response.results.map((i) => ({
@@ -29,10 +36,12 @@ export function getLearningPathById(uid) {
 
   return responseWrapper(
     axios({
-      url: corsProxy,
-      params: {
-        url: getByIdUrl,
-      },
+      url: proxyEnabled ? corsProxy : microsoftLearnUrl,
+      params: proxyEnabled
+        ? {
+            url: getByIdUrl,
+          }
+        : undefined,
     })
   );
 }
@@ -42,21 +51,26 @@ export function getModuleById(uid) {
 
   return responseWrapper(
     axios({
-      url: corsProxy,
-      params: {
-        url: getByIdUrl,
-      },
+      url: proxyEnabled ? corsProxy : microsoftLearnUrl,
+      params: proxyEnabled
+        ? {
+            url: getByIdUrl,
+          }
+        : undefined,
     })
   );
 }
 
 function responseWrapper(res) {
   return res.then((response) => {
-    if (response.data.status.http_code === 200)
+    if (response.data.status?.http_code === 200)
       return JSON.parse(response.data.contents);
-    else if (response.data.status.http_code === 404) {
+    else if (response.data.status?.http_code === 404) {
       return null;
     }
+
+    // Showing error message from proxy.
+    alert(response.data);
     throw new Error("Network response was not ok.");
   });
 }

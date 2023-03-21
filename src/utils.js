@@ -10,6 +10,8 @@ export const productTypes = [
   "windows",
   "ms-graph",
 ];
+export const historyLimit = 20;
+export const proxyEnabled = loadItemFromLocalStorage("proxyEnabled", true);
 
 export function formatTimeInMinutes(durationInMinutes) {
   if (durationInMinutes < 60) {
@@ -54,4 +56,17 @@ export function createProductTypeQuery(selectedTypes) {
   }
 
   return "";
+}
+
+export function loadItemFromLocalStorage(key, defaultValue = null) {
+  let value = localStorage.getItem(key);
+  return value !== null ? JSON.parse(value) : defaultValue;
+}
+
+export function storeItemInLocalStorage(key, value) {
+  localStorage[key] = JSON.stringify(value);
+}
+
+export function compareHistory(h1, h2) {
+  return h1.length === h2.length && h1.every((h, ix) => h.uid === h2[ix].uid);
 }

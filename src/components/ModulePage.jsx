@@ -1,8 +1,15 @@
 import { CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { NavLink, useParams } from "react-router-dom";
+import AppContext from "../contexts/AppContext";
 import { getModuleById } from "../proxy-service";
-import { getDerivedPropsLearningPath } from "../utils";
+import {
+  compareHistory,
+  formatTimeInMinutes,
+  getDerivedPropsLearningPath,
+  historyLimit,
+  normalizeCamelCase,
+} from "../utils";
 import CenterComponent from "./Common/CenterComponent";
 import LearningPathHeader from "./Common/LearningPathHeader";
 import ModuleHeader from "./Common/ModuleHeader";
@@ -12,13 +19,41 @@ import UnitList from "./Common/UnitList";
 export default function ModulePage() {
   const { uid } = useParams();
   const [module, setModule] = useState(undefined);
-  const navigate = useNavigate();
+  const { history, setAppActions } = useContext(AppContext);
 
   useEffect(() => {
     if (uid) {
       getModuleById(uid).then((result) => setModule(result));
     }
   }, [uid]);
+
+  useEffect(() => {
+    if (module) {
+      var captionItems = [
+        formatTimeInMinutes(module.durationInMinutes),
+        normalizeCamelCase(module.type),
+        `${module.units.length} Units`,
+      ];
+      var appActions = {
+        history: [
+          {
+            uid: module.uid,
+            type: module.type,
+            lastOpened: new Date(),
+            title: module.title,
+            captionItems,
+          },
+          ...history
+            .filter((item) => item.uid !== module.uid)
+            .slice(0, historyLimit - 1),
+        ],
+      };
+
+      if (!compareHistory(appActions.history, history)) {
+        setAppActions(appActions);
+      }
+    }
+  }, [module]);
 
   if (module === null) {
     return <NotFound />;
@@ -34,12 +69,6 @@ export default function ModulePage() {
 
   return (
     <div>
-      <button
-        className={"btn btn-secondary btn-sm rounded-0"}
-        onClick={() => navigate(-1)}
-      >
-        Back
-      </button>
       <ModuleHeader
         module={module}
         titleSize="h3"
@@ -62,7 +91,7 @@ export default function ModulePage() {
               return (
                 <NavLink
                   key={lp.uid}
-                  to={`/learning-path/${lp.uid}`}
+                  to={`/learningPath/${lp.uid}`}
                   className={"text-decoration-none"}
                 >
                   <LearningPathHeader

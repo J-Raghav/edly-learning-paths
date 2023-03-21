@@ -1,8 +1,13 @@
 import { CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import AppContext from "../contexts/AppContext";
 import { getLearningPathById } from "../proxy-service";
-import { getDerivedPropsLearningPath } from "../utils";
+import {
+  compareHistory,
+  getDerivedPropsLearningPath,
+  historyLimit,
+} from "../utils";
 import CenterComponent from "./Common/CenterComponent";
 import LearningPathHeader from "./Common/LearningPathHeader";
 import ModuleCard from "./Common/ModuleCard";
@@ -10,8 +15,8 @@ import NotFound from "./Common/NotFound";
 
 export default function LearningPathPage(props) {
   const { uid } = useParams();
-  const navigate = useNavigate();
   const [learningPath, setLearningPath] = useState(undefined);
+  const { history, setAppActions } = useContext(AppContext);
   const headerProps = getDerivedPropsLearningPath(learningPath);
 
   useEffect(() => {
@@ -19,6 +24,30 @@ export default function LearningPathPage(props) {
       getLearningPathById(uid).then((result) => setLearningPath(result));
     }
   }, [uid]);
+
+  useEffect(() => {
+    if (learningPath) {
+      var appActions = {
+        history: [
+          {
+            uid: learningPath.uid,
+            type: learningPath.type,
+            title: learningPath.title,
+            lastOpened: new Date(),
+            captionItems:
+              getDerivedPropsLearningPath(learningPath).captionItems,
+          },
+          ...history
+            .filter((item) => item.uid !== learningPath.uid)
+            .slice(0, historyLimit - 1),
+        ],
+      };
+
+      if (!compareHistory(appActions.history, history)) {
+        setAppActions(appActions);
+      }
+    }
+  }, [learningPath]);
 
   if (learningPath === null) {
     return <NotFound />;
@@ -34,12 +63,6 @@ export default function LearningPathPage(props) {
 
   return (
     <div className="w-100">
-      <button
-        className={"btn btn-secondary btn-sm rounded-0"}
-        onClick={() => navigate(-1)}
-      >
-        Back
-      </button>
       <LearningPathHeader
         className="border mx-5 my-4 p-3 p-md-5"
         learningPath={learningPath}

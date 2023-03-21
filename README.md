@@ -17,3 +17,13 @@ Running Instructions:-
 - Prod Build: `npm run build`
 
 Deployed Version URL: [[Open](https://edwisely-learning-paths.web.app)] `https://edwisely-learning-paths.web.app`
+
+Completed Items:-
+
+- Added Learning paths and modules with intuitive navigation.
+- `Home Page` have ability to filter learning paths based on domain which is directly linked with `Search API`
+- `Module Page` displays both units under it and related learning paths.
+- `Learning Page` displays modules and units under them.
+- Added `Recents page` feature for showing recently accessed modules/learning paths.
+- Structured components for avoiding repeated code.
+- Responsive UI supports 2 versions for mobile and desktop.

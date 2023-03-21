@@ -51,8 +51,8 @@ export default function Home() {
 
   return (
     <>
-      <LinearProgress hidden={!isLoading} />{" "}
       <div className="container p-3 p-md-5">
+        <LinearProgress className="mb-4 w-100" hidden={!isLoading} />
         <h1 className="h3 mb-3">Learning Paths</h1>
         <div className="row mb-3">
           <FormControl sx={{ m: 1, width: 300 }}>
@@ -83,7 +83,7 @@ export default function Home() {
               <Box key={learningPath.uid} className="mb-4">
                 <NavLink
                   className="text-decoration-none"
-                  to={`/learning-path/${learningPath.uid}`}
+                  to={`/learningPath/${learningPath.uid}`}
                 >
                   <LearningPathHeader
                     sx={{
