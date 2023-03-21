@@ -42,11 +42,13 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    getLearningPaths(selectedProducts).then((result) => {
-      setLoading(false);
-      setLearningPath(result);
-    });
+    if (!isLoading) {
+      setLoading(true);
+      getLearningPaths(selectedProducts).then((result) => {
+        setLoading(false);
+        setLearningPath(result);
+      });
+    }
   }, [selectedProducts]);
 
   return (

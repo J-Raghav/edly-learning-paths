@@ -11,7 +11,8 @@ export const productTypes = [
   "ms-graph",
 ];
 export const historyLimit = 20;
-export const proxyEnabled = loadItemFromLocalStorage("proxyEnabled", true);
+export const proxyEnabled = () =>
+  loadItemFromLocalStorage("proxyEnabled", true);
 
 export function formatTimeInMinutes(durationInMinutes) {
   if (durationInMinutes < 60) {
@@ -58,9 +59,14 @@ export function createProductTypeQuery(selectedTypes) {
   return "";
 }
 
-export function loadItemFromLocalStorage(key, defaultValue = null) {
+export function loadItemFromLocalStorage(
+  key,
+  defaultValue = null,
+  transform = null
+) {
   let value = localStorage.getItem(key);
-  return value !== null ? JSON.parse(value) : defaultValue;
+  value = value !== null ? JSON.parse(value) : defaultValue;
+  return typeof transform === "function" ? transform(value) : value;
 }
 
 export function storeItemInLocalStorage(key, value) {

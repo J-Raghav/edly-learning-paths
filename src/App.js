@@ -8,9 +8,22 @@ import RecentsPage from "./components/RecentsPage";
 import AppContext, { DEFAULT_USER_ACTION } from "./contexts/AppContext";
 import { loadItemFromLocalStorage, storeItemInLocalStorage } from "./utils";
 
+function transformRecentItem(val) {
+  const history = val.history.map((h) => {
+    const lastOpened =
+      typeof h.lastOpened === "string" ? new Date(h.lastOpened) : h.lastOpened;
+    return { ...h, lastOpened };
+  });
+  return { ...val, history };
+}
+
 function App() {
   const [appActions, setAppActions] = useState(
-    loadItemFromLocalStorage("appActions", DEFAULT_USER_ACTION)
+    loadItemFromLocalStorage(
+      "appActions",
+      DEFAULT_USER_ACTION,
+      transformRecentItem
+    )
   );
 
   const navigate = useNavigate();

@@ -7,20 +7,11 @@ import {
 } from "./utils";
 
 export function getLearningPaths(selectedProducts) {
-  const msLearnAPI = `https://learn.microsoft.com/api/contentbrowser/search?environment=prod&locale=en-us&facet=roles&facet=levels&facet=products&facet=subjects&facet=resource_type&$filter=((resource_type eq 'learning path')) ${createProductTypeQuery(
+  const msLearnAPI = `/api/contentbrowser/search?environment=prod&locale=en-us&facet=roles&facet=levels&facet=products&facet=subjects&facet=resource_type&$filter=((resource_type eq 'learning path')) ${createProductTypeQuery(
     selectedProducts
   )}&$top=30&showHidden=false&fuzzySearch=false`;
 
-  return responseWrapper(
-    axios({
-      url: proxyEnabled ? corsProxy : microsoftLearnUrl,
-      params: proxyEnabled
-        ? {
-            url: msLearnAPI,
-          }
-        : undefined,
-    })
-  ).then((response) => {
+  return responseWrapper(axiosWrapper(msLearnAPI)).then((response) => {
     return response.results.map((i) => ({
       ...i,
       type: "learningPath",
@@ -32,45 +23,44 @@ export function getLearningPaths(selectedProducts) {
 }
 
 export function getLearningPathById(uid) {
-  const getByIdUrl = `https://learn.microsoft.com/api/hierarchy/paths/${uid}?locale=en-us`;
+  const getByIdUrl = `/api/hierarchy/paths/${uid}?locale=en-us`;
 
-  return responseWrapper(
-    axios({
-      url: proxyEnabled ? corsProxy : microsoftLearnUrl,
-      params: proxyEnabled
-        ? {
-            url: getByIdUrl,
-          }
-        : undefined,
-    })
-  );
+  return responseWrapper(axiosWrapper(getByIdUrl));
 }
 
 export function getModuleById(uid) {
-  const getByIdUrl = `https://learn.microsoft.com/api/hierarchy/modules/${uid}?locale=en-us`;
+  const getByIdUrl = `/api/hierarchy/modules/${uid}?locale=en-us`;
 
-  return responseWrapper(
-    axios({
-      url: proxyEnabled ? corsProxy : microsoftLearnUrl,
-      params: proxyEnabled
-        ? {
-            url: getByIdUrl,
-          }
-        : undefined,
-    })
-  );
+  return responseWrapper(axiosWrapper(getByIdUrl));
+}
+
+function axiosWrapper(url) {
+  return axios({
+    url: proxyEnabled() ? corsProxy : microsoftLearnUrl + url,
+    params: proxyEnabled()
+      ? {
+          url,
+        }
+      : undefined,
+  });
 }
 
 function responseWrapper(res) {
   return res.then((response) => {
-    if (response.data.status?.http_code === 200)
-      return JSON.parse(response.data.contents);
-    else if (response.data.status?.http_code === 404) {
-      return null;
+    if (proxyEnabled()) {
+      if (response.data.status?.http_code === 200)
+        return JSON.parse(response.data.contents);
+      else if (response.data.status?.http_code === 404) {
+        return null;
+      }
+
+      return;
     }
 
-    // Showing error message from proxy.
-    alert(response.data);
-    throw new Error("Network response was not ok.");
+    if (response.status === 200) {
+      return response.data;
+    } else if (response.status === 404) {
+      return null;
+    }
   });
 }

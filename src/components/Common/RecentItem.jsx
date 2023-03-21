@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 
 export default function RecentItem(props) {
   const { uid, title, type, captionItems, lastOpened } = props;
+
   return (
     <div className="border bg-white p-2">
       <div className="d-flex justify-content-between">
